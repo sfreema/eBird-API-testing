@@ -14259,7 +14259,8 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="eBird-API-Testing">eBird API Testing<a class="anchor-link" href="#eBird-API-Testing">&#182;</a></h1><p>To improve upon eBird's email alerts, I plan to create an interface for showing recent notable bird sightings as reported to eBird.</p>
+<h1 id="eBird-API-Testing">eBird API Testing<a class="anchor-link" href="#eBird-API-Testing">&#182;</a></h1><p>Toying around with the eBird API and bird observation data with the plan of providing a better alert service in the future.</p>
+<p>Next time: bird taxonomic sorting (Clement Checklist); FIXME's; investigating whether the data from the recent versus the notable sighting endpoints is the same or not (in terms of how often the sources of those endpoints are updated. The reason for this is last time a goshawk observation was noted in the notable sightings, but not in the recent sightings with the same provided parameters: why?)</p>
 
 </div>
 </div>
@@ -14316,12 +14317,6 @@ a.anchor-link {
 <span class="n">back</span> <span class="o">=</span> <span class="mi">7</span>
 <span class="n">restrictions</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># FIXME: implement &#39;country&#39;,&#39;county&#39;, &#39;province/territory&#39;, and the like?</span>
 <span class="c1">#max_results = FIXME: TBD, but also should note when the cap has been reached (10000 as per API)</span>
-
-<span class="c1"># FIXME why not tabulate all such cases, notable, life, year?</span>
-<span class="c1"># by default return sightings that are notable for the area</span>
-<span class="c1"># however if the user provides a life list, then update notable = &#39;life&#39;</span>
-<span class="c1"># and if the user provides a year list, then update notable = &#39;year&#39;</span>
-<span class="n">notable</span> <span class="o">=</span> <span class="s1">&#39;notable&#39;</span>
 </pre></div>
 
      </div>
@@ -14334,17 +14329,14 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Get-life-list">Get life list<a class="anchor-link" href="#Get-life-list">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># look for provided data</span>
-<span class="c1"># FIXME for deployment, why not do all of these</span>
-<span class="n">notable</span> <span class="o">=</span> <span class="s1">&#39;life&#39;</span>
-<span class="k">if</span> <span class="n">notable</span> <span class="o">==</span> <span class="s1">&#39;life&#39;</span><span class="p">:</span> <span class="c1"># conditions user-set for notable</span>
-    <span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;ebird_world_life_list.csv&#39;</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;ebird_world_life_list.csv&#39;</span>
 
 <span class="n">life_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">year_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -14355,19 +14347,42 @@ a.anchor-link {
             <span class="k">if</span> <span class="n">skip_header</span><span class="p">:</span>
                 <span class="n">skip_header</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">continue</span>
-            <span class="n">species</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">last_seen</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> %b %Y&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">last_seen</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>
                 <span class="n">year_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
             <span class="n">life_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Bird lists readied&#39;</span><span class="p">)</span>
             
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;For finding notable life or year list birds, please make available your life or year list available from FIXME&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;For finding notable life or year list birds, please provide your eBird list from the following eBird link:&#39;</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;a href=&quot;https://ebird.org/lifelist?r=world&amp;rank=mrec&amp;time=life&amp;fmt=csv&quot;&gt;eBird Life List&lt;/a&gt;&quot;&quot;&quot;</span><span class="p">))</span>
 </pre></div>
 
      </div>
 </div>
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Bird lists readied
+</pre>
+</div>
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -14382,7 +14397,7 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># recent notables</span>
-<span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://api.ebird.org/v2/data/obs/geo/recent?includeProvisional=true&amp;</span><span class="si">{</span><span class="n">lat_lon_request</span><span class="si">}</span><span class="s1">&amp;dist=</span><span class="si">{</span><span class="n">dist</span><span class="si">}</span><span class="s1">&amp;back=</span><span class="si">{</span><span class="n">back</span><span class="si">}</span><span class="s1">&amp;detail=full&#39;</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://api.ebird.org/v2/data/obs/geo/recent?includeProvisional=true&amp;detail=full&amp;sort=species&amp;</span><span class="si">{</span><span class="n">lat_lon_request</span><span class="si">}</span><span class="s1">&amp;dist=</span><span class="si">{</span><span class="n">dist</span><span class="si">}</span><span class="s1">&amp;back=</span><span class="si">{</span><span class="n">back</span><span class="si">}</span><span class="s1">&#39;</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
 <span class="n">recent_sightings</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">recent_sightings</span><span class="p">))</span>
@@ -14405,7 +14420,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>144
+<pre>127
 </pre>
 </div>
 </div>
@@ -14420,7 +14435,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a function for verifying observation data quality (currently just removing hybrids)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a function for verifying individual observation data quality (currently just removing hybrids)</span>
 <span class="k">def</span> <span class="nf">obs_filter</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>
     <span class="k">if</span> <span class="s1">&#39;(hybrid)&#39;</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]:</span> <span class="c1"># FIXME: speciesCode for MALL x ABDU is &#39;x00004&#39;, perhaps this is the norm for hybrids - consult reference guide if available</span>
         <span class="k">return</span> <span class="p">[]</span>
@@ -14439,20 +14454,20 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># gather observations that are off life list and/or year list</span>
-<span class="n">life_need</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">year_need</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">life_need</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">year_need</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">recent_sightings</span><span class="p">:</span>
     
     <span class="n">obs</span> <span class="o">=</span> <span class="n">obs_filter</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">continue</span>
-    
-    <span class="k">if</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">year_list</span><span class="p">:</span>
-        <span class="k">pass</span><span class="c1">#print(obs[&#39;comName&#39;],&#39;seen this year&#39;)</span>
-    <span class="k">elif</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">year_list</span> <span class="ow">and</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">life_list</span><span class="p">:</span>
-        <span class="n">year_need</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">year_list</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1">#print(obs[&#39;comName&#39;],&#39;seen this year&#39;)</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">year_list</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">life_list</span><span class="p">:</span>
+        <span class="n">year_need</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">life_need</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">life_need</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs</span>
 </pre></div>
 
      </div>
@@ -14484,14 +14499,14 @@ a.anchor-link {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># print out list results</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">life_need</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Never seen birds:&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">life_need</span><span class="p">:</span>
-        <span class="n">print_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">life_need</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">print_obs</span><span class="p">(</span><span class="n">life_need</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">life_need</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Birds not seen this year:&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">year_need</span><span class="p">:</span>
-        <span class="n">print_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">year_need</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">print_obs</span><span class="p">(</span><span class="n">year_need</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         
 <span class="c1"># nice</span>
 </pre></div>
@@ -14526,7 +14541,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121576207">Evening Grosbeak</a>
+<a href="https://ebird.org/checklist/S122041137">Greater White-fronted Goose</a>
 </div>
 
 </div>
@@ -14539,85 +14554,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121561128">Hudsonian Godwit</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121522971">Golden Eagle</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121468463">Cattle Egret</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121459838">Ring-necked Pheasant</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121443160">Black-legged Kittiwake</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121399710">Common Redpoll</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121310173">Northern Goshawk</a>
+<a href="https://ebird.org/checklist/S122078047">Bohemian Waxwing</a>
 </div>
 
 </div>
@@ -14635,32 +14572,6 @@ Birds not seen this year:
 </div>
 </div>
 
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121580318">Tundra Swan</a>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121390608">Black Scoter</a>
-</div>
-
-</div>
-
 </div>
 
 </div>
@@ -14668,7 +14579,7 @@ Birds not seen this year:
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Same,-but-'Notable'-as-per-eBird">Same, but 'Notable' as per eBird<a class="anchor-link" href="#Same,-but-'Notable'-as-per-eBird">&#182;</a></h2>
+<h2 id="Same,-but-'notable'-as-per-eBird">Same, but 'notable' as per eBird<a class="anchor-link" href="#Same,-but-'notable'-as-per-eBird">&#182;</a></h2>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
@@ -14676,7 +14587,7 @@ Birds not seen this year:
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://api.ebird.org/v2/data/obs/geo/recent/notable?includeProvisional=true&amp;</span><span class="si">{</span><span class="n">lat_lon_request</span><span class="si">}</span><span class="s1">&amp;dist=</span><span class="si">{</span><span class="n">dist</span><span class="si">}</span><span class="s1">&amp;back=</span><span class="si">{</span><span class="n">back</span><span class="si">}</span><span class="s1">&amp;detail=full&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://api.ebird.org/v2/data/obs/geo/recent/notable?includeProvisional=true&amp;detail=full&amp;</span><span class="si">{</span><span class="n">lat_lon_request</span><span class="si">}</span><span class="s1">&amp;dist=</span><span class="si">{</span><span class="n">dist</span><span class="si">}</span><span class="s1">&amp;back=</span><span class="si">{</span><span class="n">back</span><span class="si">}</span><span class="s1">&#39;</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
 <span class="n">notable_sightings</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">notable_sightings</span><span class="p">))</span>
@@ -14699,7 +14610,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>171
+<pre>125
 </pre>
 </div>
 </div>
@@ -14719,11 +14630,12 @@ Birds not seen this year:
     <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">notable_sightings</span><span class="p">:</span>
 
         <span class="n">obs</span> <span class="o">=</span> <span class="n">obs_filter</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">life_need</span> <span class="ow">or</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">year_need</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">life_need</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">year_need</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">continue</span>
 
         <span class="n">print_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="c1">#...</span>
         <span class="k">break</span>
 </pre></div>
 
@@ -14757,7 +14669,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121599149">Gray Catbird</a>
+<a href="https://ebird.org/checklist/S122101127">Northern Goshawk</a>
 </div>
 
 </div>
@@ -14769,7 +14681,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;speciesCode&#39;: &#39;grycat&#39;, &#39;comName&#39;: &#39;Gray Catbird&#39;, &#39;sciName&#39;: &#39;Dumetella carolinensis&#39;, &#39;locId&#39;: &#39;L359367&#39;, &#39;locName&#39;: &#39;Prince Edward Point NWA&#39;, &#39;obsDt&#39;: &#39;2022-10-30 15:45&#39;, &#39;howMany&#39;: 1, &#39;lat&#39;: 43.9360527, &#39;lng&#39;: -76.8840837, &#39;obsValid&#39;: False, &#39;obsReviewed&#39;: False, &#39;locationPrivate&#39;: False, &#39;subId&#39;: &#39;S121599149&#39;, &#39;subnational2Code&#39;: &#39;CA-ON-PE&#39;, &#39;subnational2Name&#39;: &#39;Prince Edward&#39;, &#39;subnational1Code&#39;: &#39;CA-ON&#39;, &#39;subnational1Name&#39;: &#39;Ontario&#39;, &#39;countryCode&#39;: &#39;CA&#39;, &#39;countryName&#39;: &#39;Canada&#39;, &#39;userDisplayName&#39;: &#39;Paul Jones&#39;, &#39;obsId&#39;: &#39;OBS1551602574&#39;, &#39;checklistId&#39;: &#39;CL24155&#39;, &#39;presenceNoted&#39;: False, &#39;hasComments&#39;: False, &#39;firstName&#39;: &#39;Paul&#39;, &#39;lastName&#39;: &#39;Jones&#39;, &#39;hasRichMedia&#39;: False}
+<pre>{&#39;speciesCode&#39;: &#39;norgos&#39;, &#39;comName&#39;: &#39;Northern Goshawk&#39;, &#39;sciName&#39;: &#39;Accipiter gentilis&#39;, &#39;locId&#39;: &#39;L359367&#39;, &#39;locName&#39;: &#39;Prince Edward Point NWA&#39;, &#39;obsDt&#39;: &#39;2022-11-08 15:00&#39;, &#39;howMany&#39;: 1, &#39;lat&#39;: 43.9360527, &#39;lng&#39;: -76.8840837, &#39;obsValid&#39;: False, &#39;obsReviewed&#39;: False, &#39;locationPrivate&#39;: False, &#39;subId&#39;: &#39;S122101127&#39;, &#39;subnational2Code&#39;: &#39;CA-ON-PE&#39;, &#39;subnational2Name&#39;: &#39;Prince Edward&#39;, &#39;subnational1Code&#39;: &#39;CA-ON&#39;, &#39;subnational1Name&#39;: &#39;Ontario&#39;, &#39;countryCode&#39;: &#39;CA&#39;, &#39;countryName&#39;: &#39;Canada&#39;, &#39;userDisplayName&#39;: &#39;Paul Jones&#39;, &#39;obsId&#39;: &#39;OBS1557810843&#39;, &#39;checklistId&#39;: &#39;CL24155&#39;, &#39;presenceNoted&#39;: False, &#39;hasComments&#39;: False, &#39;firstName&#39;: &#39;Paul&#39;, &#39;lastName&#39;: &#39;Jones&#39;, &#39;hasRichMedia&#39;: False}
 </pre>
 </div>
 </div>
@@ -14781,7 +14693,7 @@ Birds not seen this year:
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>This is obviously a long list, and likely often will be. Late/high counts of species that are observed in multiple lists are shown, and that takes away from this leaving a useful summary of information. To match the ends of this work, aggregate entries by species (ie. don't use print_obs(), make a new function)</p>
+<p>Last time when working on this, it was found that eBird's notable sightings report contains exact duplicates. Not sure why, but potentially a result of birders updating checklists, regional reviewers updating checklists, etc. In any case, exact duplicates are the result, so in the follow aggregation ensure no checklist duplicates are included:</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -14790,14 +14702,41 @@ Birds not seen this year:
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># avoiding the record-by-record approach, aggregate by species, order by datetime of list etc</span>
-<span class="k">def</span> <span class="nf">group_by_species</span><span class="p">(</span><span class="n">sightings</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">equal_obs</span><span class="p">(</span><span class="n">obs1</span><span class="p">,</span><span class="n">obs2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">obs1</span><span class="p">[</span><span class="s1">&#39;locName&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">obs2</span><span class="p">[</span><span class="s1">&#39;locName&#39;</span><span class="p">])</span> <span class="ow">and</span> \
+           <span class="p">(</span><span class="n">obs1</span><span class="p">[</span><span class="s1">&#39;obsDt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">obs2</span><span class="p">[</span><span class="s1">&#39;obsDt&#39;</span><span class="p">])</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">aggregate_obs</span><span class="p">(</span><span class="n">sightings</span><span class="p">):</span>
     <span class="n">dict_species</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># comName : [obs1,obs2,...]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">sightings</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dict_species</span><span class="p">:</span>
-            <span class="n">dict_species</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="c1">#print(obs)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sciName&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dict_species</span><span class="p">:</span>
+            <span class="n">new_observation</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dict_species</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">equal_obs</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="n">obs</span><span class="p">):</span>
+                    <span class="n">new_observation</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">new_observation</span><span class="p">:</span>
+                <span class="n">dict_species</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">dict_species</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="n">dict_species</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+        <span class="c1">#if i &gt; 3:</span>
+        <span class="c1">#    break</span>
+        <span class="c1">#i += 1</span>
     <span class="k">return</span> <span class="n">dict_species</span>
 </pre></div>
 
@@ -14809,19 +14748,17 @@ Birds not seen this year:
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># now print the notable sightings</span>
-<span class="n">notable_species</span> <span class="o">=</span> <span class="n">group_by_species</span><span class="p">(</span><span class="n">notable_sightings</span><span class="p">)</span>
+<span class="n">notable_species</span> <span class="o">=</span> <span class="n">aggregate_obs</span><span class="p">(</span><span class="n">notable_sightings</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">notable_species</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
     <span class="n">links</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">notable_species</span><span class="p">[</span><span class="n">species</span><span class="p">][:</span><span class="mi">2</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">year_need</span> <span class="ow">or</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">life_need</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">links</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;a href=&quot;https://ebird.org/checklist/</span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;subId&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;obsDt&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/a&gt;&lt;br&gt;&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">notable_species</span><span class="p">[</span><span class="n">species</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>
+        <span class="n">links</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;a href=&quot;https://ebird.org/checklist/</span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;subId&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;obsDt&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;, &#39;</span><span class="o">+</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;locName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/a&gt;&lt;br&gt;&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">links</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;comName&#39;</span><span class="p">])</span>
         <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">links</span><span class="p">))</span>
         
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">notable_species</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span><span class="s1">&#39;down from&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">notable_sightings</span><span class="p">))</span>
@@ -14844,7 +14781,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Gray Catbird
+<pre>Northern Goshawk
 </pre>
 </div>
 </div>
@@ -14857,207 +14794,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121599149">2022-10-30 15:45</a><br><a href="https://ebird.org/checklist/S121319422">2022-10-25 12:31</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Great Egret
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121576061">2022-10-30 11:05</a><br><a href="https://ebird.org/checklist/S121560777">2022-10-30 10:19</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Hudsonian Godwit
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121561128">2022-10-30 09:22</a><br><a href="https://ebird.org/checklist/S121561128">2022-10-30 09:22</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Sanderling
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121561128">2022-10-30 09:22</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Common Yellowthroat
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121558373">2022-10-30 09:00</a><br><a href="https://ebird.org/checklist/S121356616">2022-10-26 07:59</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Tufted Titmouse
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121521610">2022-10-29 16:13</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Golden Eagle
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121522971">2022-10-29 14:55</a><br><a href="https://ebird.org/checklist/S121522971">2022-10-29 14:55</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Cackling Goose
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121515532">2022-10-29 14:08</a><br><a href="https://ebird.org/checklist/S121515532">2022-10-29 14:08</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Black-crowned Night-Heron
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121509181">2022-10-29 12:14</a><br><a href="https://ebird.org/checklist/S121509181">2022-10-29 12:14</a><br>
+<a href="https://ebird.org/checklist/S122101127">2022-11-08 15:00, Prince Edward Point NWA</a><br>
 </div>
 
 </div>
@@ -15082,7 +14819,182 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121526097">2022-10-29 08:40</a><br><a href="https://ebird.org/checklist/S121487539">2022-10-29 07:52</a><br>
+<a href="https://ebird.org/checklist/S122100560">2022-11-08 13:00, PEC - Long Point Road and Gravelly Bay Road</a><br><a href="https://ebird.org/checklist/S122078047">2022-11-08 06:50, Prince Edward Point NWA</a><br><a href="https://ebird.org/checklist/S121992992">2022-11-06 11:08, Prince Edward Point  NWA--Prince Edward Point Bird Observatory</a><br><a href="https://ebird.org/checklist/S121969495">2022-11-06 08:49, Prince Edward Point National Wildlife Area--Point Traverse Woods</a><br><a href="https://ebird.org/checklist/S121995158">2022-11-06 08:43, Prince Edward Point  NWA--Prince Edward Point Bird Observatory</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Tufted Titmouse
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122066281">2022-11-08 08:13, 25 Oakwood Lane, Greater Napanee, Ontario, CA (44.054, -77.054)</a><br><a href="https://ebird.org/checklist/S121979986">2022-11-06 15:40, 5 Edgewood Rd, Loyalist CA-ON 44.21317, -76.67815</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Rose-breasted Grosbeak
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122065952">2022-11-08 07:35, Stonecroft - 690 Aylmer Cres, Kingston CA-ON</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Red Crossbill
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122078047">2022-11-08 06:50, Prince Edward Point NWA</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Gray Catbird
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122078047">2022-11-08 06:50, Prince Edward Point NWA</a><br><a href="https://ebird.org/checklist/S121896620">2022-11-05 10:36, Amherst Island--Owl Woods</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Cackling Goose
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122050290">2022-11-07 16:10, Kingston--Finkle's Shore Park</a><br><a href="https://ebird.org/checklist/S121858994">2022-11-04 16:00, Kingston--Finkle's Shore Park</a><br><a href="https://ebird.org/checklist/S121791184">2022-11-03 12:27, Kingston--Finkle's Shore Park</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Greater White-fronted Goose
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122041137">2022-11-07 16:04, 408 Dundas Street West, Napanee, Ontario, CA (44.234, -76.97)</a><br><a href="https://ebird.org/checklist/S121916727">2022-11-05 17:38, Napanee River</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Hudsonian Godwit
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S122031815">2022-11-07 10:44, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S122013723">2022-11-07 07:39, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121947329">2022-11-06 08:56, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121905391">2022-11-05 14:43, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121887650">2022-11-05 10:31, Wolfe Island--Button Bay</a><br>
 </div>
 
 </div>
@@ -15107,357 +15019,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121468463">2022-10-28 16:40</a><br><a href="https://ebird.org/checklist/S121440221">2022-10-28 09:10</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Black-legged Kittiwake
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121443160">2022-10-28 08:55</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Eastern Phoebe
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121411701">2022-10-27 14:00</a><br><a href="https://ebird.org/checklist/S121422980">2022-10-27 09:53</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Palm Warbler
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121422980">2022-10-27 09:53</a><br><a href="https://ebird.org/checklist/S121398648">2022-10-27 09:07</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Black Scoter
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121374194">2022-10-26 13:35</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Yellow-bellied Sapsucker
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121374194">2022-10-26 13:35</a><br><a href="https://ebird.org/checklist/S121269001">2022-10-24 09:01</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Blue-headed Vireo
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121364177">2022-10-26 08:30</a><br><a href="https://ebird.org/checklist/S121336418">2022-10-26 07:40</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Yellow-billed Cuckoo
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121364536">2022-10-26 07:59</a><br><a href="https://ebird.org/checklist/S121364536">2022-10-26 07:59</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Nashville Warbler
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121356616">2022-10-26 07:59</a><br><a href="https://ebird.org/checklist/S121348703">2022-10-26 07:59</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Solitary Sandpiper
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121316399">2022-10-25 17:05</a><br><a href="https://ebird.org/checklist/S121316399">2022-10-25 17:05</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Blue-winged Teal
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121316399">2022-10-25 17:05</a><br><a href="https://ebird.org/checklist/S121301387">2022-10-25 11:39</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Northern Goshawk
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121310173">2022-10-25 13:15</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Ruddy Turnstone
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121246056">2022-10-24 09:23</a><br><a href="https://ebird.org/checklist/S121270703">2022-10-24 09:23</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Green Heron
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121244570">2022-10-24 09:22</a><br>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Short-eared Owl
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121244570">2022-10-24 09:22</a><br>
+<a href="https://ebird.org/checklist/S122082182">2022-11-07 10:30, Wolfe Island</a><br><a href="https://ebird.org/checklist/S122015504">2022-11-07 08:53, Wolfe Island--4th Line Road</a><br><a href="https://ebird.org/checklist/S122011430">2022-11-07 07:52, Wolfe Island--4th Line Road</a><br><a href="https://ebird.org/checklist/S121952912">2022-11-06 10:05, Wolfe Island--4th Line Road</a><br><a href="https://ebird.org/checklist/S121979346">2022-11-06 09:51, Wolfe Island--4th Line Road</a><br>
 </div>
 
 </div>
@@ -15482,7 +15044,7 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<a href="https://ebird.org/checklist/S121244570">2022-10-24 09:22</a><br>
+<a href="https://ebird.org/checklist/S121947329">2022-11-06 08:56, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121905391">2022-11-05 14:43, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121925973">2022-11-05 10:31, Wolfe Island--Button Bay</a><br><a href="https://ebird.org/checklist/S121892273">2022-11-05 08:30, Wolfe Island, Ontario, CA (44.173, -76.445)</a><br>
 </div>
 
 </div>
@@ -15494,7 +15056,357 @@ Birds not seen this year:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>26 down from 171
+<pre>Little Gull
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121947329">2022-11-06 08:56, Wolfe Island--Button Bay</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Blue-winged Teal
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121969495">2022-11-06 08:49, Prince Edward Point National Wildlife Area--Point Traverse Woods</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>White-winged Crossbill
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121969495">2022-11-06 08:49, Prince Edward Point National Wildlife Area--Point Traverse Woods</a><br><a href="https://ebird.org/checklist/S121985385">2022-11-06 08:00, Prince Edward Point NWA</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Black-crowned Night-Heron
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121905987">2022-11-05 15:00, Kingston--Hillview Pond</a><br><a href="https://ebird.org/checklist/S121732698">2022-11-02 08:15, Kingston--Hillview Pond</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Great Egret
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121897214">2022-11-05 08:39, Kingston--Belle Park</a><br><a href="https://ebird.org/checklist/S121892273">2022-11-05 08:30, Wolfe Island, Ontario, CA (44.173, -76.445)</a><br><a href="https://ebird.org/checklist/S121737669">2022-11-02 10:15, Kingston--100ft Park</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Golden Eagle
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121851307">2022-11-04 13:27, Kingston--Lemoine Point CA</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Fish Crow
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121778185">2022-11-03 08:20, ne corner, Biosciences Complex</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Lincoln&#39;s Sparrow
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121788697">2022-11-03 07:53, Amherst Island</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Red-tailed Hawk (abieticola)
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121788362">2022-11-03 07:53, Amherst Island</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Eastern Phoebe
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121788362">2022-11-03 07:53, Amherst Island</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Barn Swallow
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121761726">2022-11-02 18:51, Kingston--Wartman-Patterson Park</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Barn Swallow (American)
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121755751">2022-11-02 13:47, Kingston--Wartman-Patterson Park</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Cape May Warbler
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121755751">2022-11-02 13:47, Kingston--Wartman-Patterson Park</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>House Wren
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+<a href="https://ebird.org/checklist/S121762314">2022-11-02 07:30, Prince Edward Point NWA</a><br>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>25 down from 125
 </pre>
 </div>
 </div>
@@ -15506,8 +15418,188 @@ Birds not seen this year:
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Better, though certainly can be improved. Also it would be great if the information attached to each observation indicated why it is notable. For the case of the catbird, it's notable because it is a late migrant, rarely seen this late in the year, but a bird may also be notably observed if there are many of them (ie. a location that tends to have fewer than 10 Canada Geese suddenly has 10000 or similar). Grouping notable observations and presenting observations with this information that eBird certainly has would be great, but it is not possible.</p>
-<p>Looking at the HTML for the eBird checklist with the catbird, the observer (Paul Jones) does indicate that the bird is late, and he also provides a clear image of the individual. Unfortunately netiher his comment nor his photo are acknowledged in the API's data (ie. 'hasComments' and 'hasRichMedia' respectively are False) :( Perhaps these fields are updated later..?</p>
+<p>As mentioned last time, reason for notability and other interesting details are not provided through the API. Addition quality updates may be applied, such as filtering out 'continuing' results in which the same notable bird has been located in and observed by many but listing the numerous sightings is of no value here.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Species-Sorting">Species Sorting<a class="anchor-link" href="#Species-Sorting">&#182;</a></h1>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Moving on, and digging further into the data, the issue of sorting species should be addressed. Sorting is available for the recent sightings endpoint, but it is not available for the notable sightings endpoint. Reporting unsorted sightings will likely confuse birders who are well-acquainted with what seems to be a universal sorting of bird families and species starting with waterfowl, and ending with sparrows (maybe?). In any case, presumably eBird internally sorts internally according to some lexicon of bird codes, so look at the taxonomy endpoints:</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># choose a birdcode, Northern Goshawk for instance as above, &#39;norgos&#39;</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;https://api.ebird.org/v2/ref/taxonomy/ebird?species=norgos&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>SCIENTIFIC_NAME,COMMON_NAME,SPECIES_CODE,CATEGORY,TAXON_ORDER,COM_NAME_CODES,SCI_NAME_CODES,BANDING_CODES,ORDER,FAMILY_COM_NAME,FAMILY_SCI_NAME,REPORT_AS,EXTINCT,EXTINCT_YEAR,FAMILY_CODE
+Accipiter gentilis,Northern Goshawk,norgos,species,8062.0,,ACGE,NOGO,Accipitriformes,&#34;Hawks, Eagles, and Kites&#34;,Accipitridae,,,,accipi1
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;https://api.ebird.org/v2/ref/taxonomy/ebird?species=coohaw&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>SCIENTIFIC_NAME,COMMON_NAME,SPECIES_CODE,CATEGORY,TAXON_ORDER,COM_NAME_CODES,SCI_NAME_CODES,BANDING_CODES,ORDER,FAMILY_COM_NAME,FAMILY_SCI_NAME,REPORT_AS,EXTINCT,EXTINCT_YEAR,FAMILY_CODE
+Accipiter cooperii,Cooper&#39;s Hawk,coohaw,species,8044.0,,ACCO,COHA,Accipitriformes,&#34;Hawks, Eagles, and Kites&#34;,Accipitridae,,,,accipi1
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Well look at that, TAXON_ORDER! Try yet another few species, one expected near the top (Mallard), one expected near the bottom (Indigo Bunting):</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;https://api.ebird.org/v2/ref/taxonomy/ebird?species=mallar&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>SCIENTIFIC_NAME,COMMON_NAME,SPECIES_CODE,CATEGORY,TAXON_ORDER,COM_NAME_CODES,SCI_NAME_CODES,BANDING_CODES,ORDER,FAMILY_COM_NAME,FAMILY_SCI_NAME,REPORT_AS,EXTINCT,EXTINCT_YEAR,FAMILY_CODE
+Anas platyrhynchos/diazi,Mallard/Mexican Duck,mallar,slash,526.0,MEDU MALL MODU,ANDI ANPL,,Anseriformes,&#34;Ducks, Geese, and Waterfowl&#34;,Anatidae,,,,anatid1
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;https://api.ebird.org/v2/ref/taxonomy/ebird?species=indbun&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;X-eBirdApiToken&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>SCIENTIFIC_NAME,COMMON_NAME,SPECIES_CODE,CATEGORY,TAXON_ORDER,COM_NAME_CODES,SCI_NAME_CODES,BANDING_CODES,ORDER,FAMILY_COM_NAME,FAMILY_SCI_NAME,REPORT_AS,EXTINCT,EXTINCT_YEAR,FAMILY_CODE
+Passerina cyanea,Indigo Bunting,indbun,species,33904.0,,PACY,INBU,Passeriformes,Cardinals and Allies,Cardinalidae,,,,cardin1
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Case closed. If there is ever an issue sorting by this field, then further information can be referred to here: <a href="https://www.birds.cornell.edu/clementschecklist">https://www.birds.cornell.edu/clementschecklist</a></p>
+<p>On the other hand, requesting the sort field is terrible, so a 'hard copy' of the TAXON_ORDER should be in hand in the back end. See the downloads from the above link!</p>
 
 </div>
 </div>
